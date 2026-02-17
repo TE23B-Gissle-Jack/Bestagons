@@ -14,7 +14,7 @@ for (int x = 0; x < Raylib.GetScreenWidth(); x++)
 {
     for (int y = 0; y < Raylib.GetScreenHeight(); y++)
     {
-        if (Random.Shared.Next(32000) == 50)
+        if (Random.Shared.Next(100000) == 50)
         {
             bᛟᚨᛏ.Add(new Tile(new(x, y)));
         }
