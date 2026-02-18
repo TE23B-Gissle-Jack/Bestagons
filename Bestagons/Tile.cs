@@ -26,6 +26,13 @@ public class Tile
         foreach (var corner in corners)
         {
             Raylib.DrawCircleV(corner, 3, Color.Purple);
+            foreach (var item in corners)
+            {
+                if (item!=corner)
+                {
+                    Raylib.DrawLineV(corner,item,Color.Orange);
+                }
+            }
         }
 
     }
@@ -35,10 +42,11 @@ public class Tile
         for (int i = 0; i < tilePositions.Count; i++)
         {
             Vector2 victor = tilePositions[i];
-            if (victor != orgin)
+            //floating point error
+            if (Vector2.Distance(victor, orgin) > 0.0001f)
             {
                 //Raylib.DrawLineV(victor, orgin, Color.Blue);
-                Vector2 middle = new(orgin.X + (victor.X - orgin.X) / 2, orgin.Y + (victor.Y - orgin.Y) / 2);
+                Vector2 middle = new(orgin.X + (victor.X - orgin.X) / 2f, orgin.Y + (victor.Y - orgin.Y) / 2f);
                 //Raylib.DrawCircleV(middle, 2, Color.Gold);
                 float k = (victor.Y - orgin.Y) / (victor.X - orgin.X);
                 float k2 = -1 / k;
@@ -46,12 +54,15 @@ public class Tile
                 float m = middle.Y - k2 * middle.X;
 
                 Raylib.DrawLineV(new(0, k2 * 0 + m), new(Raylib.GetScreenWidth(), k2 * Raylib.GetScreenWidth() + m), Color.Green);
+
+                //y=kx+m -> Ax+By+c=0
+                //0=kx-y+m
                 functions.Add([k2, m]);
                 Console.WriteLine(m);
             }
         }
-        functions.Add([0, Raylib.GetScreenHeight()]);
-        functions.Add([0, 0]);
+        functions.Add([0, Raylib.GetScreenHeight()-5]);
+        functions.Add([0, 5]);
         functions.Add([int.MaxValue, Raylib.GetScreenHeight()]);
         functions.Add([int.MaxValue, 0]);
     }
@@ -93,14 +104,14 @@ public class Tile
             //If d<0 then the point lies on one side of the line, and if d>0 then it lies on the other side. If d=0 then the point lies exactly line.
             if (orgin)
             {
-                functionRelastion.Add(d);
+                functionRelastion.Add(Math.Sign(d));
             }
             else
             {
                 //bool less = functionRelastion[i]<0;
                 if (functionRelastion[i] * d < 0)
                 {
-                    corners.Remove(point);
+                    corners.RemoveAt(function);
                     Console.WriteLine("DIe");
                     //functionRelastion.RemoveAt(i);
                     break;

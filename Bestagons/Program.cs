@@ -10,9 +10,16 @@ Raylib.SetTargetFPS(60);
 Raylib.SetExitKey(KeyboardKey.Null);
 
 List<Tile> bᛟᚨᛏ = new List<Tile>();
-for (int x = 0; x < Raylib.GetScreenWidth(); x++)
+// bᛟᚨᛏ.Add(new Tile(new(500,500)));
+// bᛟᚨᛏ.Add(new Tile(new(600,500)));
+// bᛟᚨᛏ.Add(new Tile(new(700,550)));
+// bᛟᚨᛏ.Add(new Tile(new(400,500)));
+// bᛟᚨᛏ.Add(new Tile(new(500,400)));
+// bᛟᚨᛏ.Add(new Tile(new(600,600)));
+
+for (int x = 5; x < Raylib.GetScreenWidth()-5; x++)
 {
-    for (int y = 0; y < Raylib.GetScreenHeight(); y++)
+    for (int y = 5; y < Raylib.GetScreenHeight()-5; y++)
     {
         if (Random.Shared.Next(100000) == 50)
         {
