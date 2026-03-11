@@ -12,6 +12,9 @@ namespace Bestagons
         List<Vector2> corners = new List<Vector2>();
         List<float[]> functions = new List<float[]>(); // [A, B, C]
         List<float> functionRelation = new List<float>();
+        public static bool hideLines = false;
+        bool hovered = false;
+        Color lineColor = new(122 + Random.Shared.Next(122), 122 + Random.Shared.Next(122), 122 + Random.Shared.Next(122));
 
         public Tile(Vector2 position)
         {
@@ -22,22 +25,30 @@ namespace Bestagons
         public void Draw()
         {
             Raylib.DrawCircleV(orgin, 5, Color.Red);
-
-            if (corners.Count>1)
+            if (!hideLines||hovered)
             {
-                Raylib.DrawLineV(corners[0], corners[corners.Count - 1], Color.Orange);
-            }
-            for (int i = 1; i < corners.Count; i++)
-            {
-                if (i!=corners.Count-1)
+                if(corners.Count > 1)
                 {
-                    Raylib.DrawTriangle(corners[0],corners[i],corners[i+1], Color.Green);
+                    Raylib.DrawLineV(corners[0], corners[corners.Count - 1], lineColor);
                 }
-                Raylib.DrawLineV(corners[i], corners[i - 1], Color.Orange);   
+                
+                for (int i = 1; i < corners.Count; i++)
+                {
+                    Raylib.DrawLineV(corners[i], corners[i - 1], lineColor);
+                }
+                foreach (var item in corners)
+                {
+                    Raylib.DrawCircleV(item, 5, Color.Pink);
+                }
             }
-            foreach (var item in corners)
+
+        }
+        public void Update()
+        {
+            hovered = Raylib.CheckCollisionPointCircle(Raylib.GetMousePosition(), orgin, 5);
+            if (hovered)
             {
-                Raylib.DrawCircleV(item, 5, Color.Pink);
+                hideLines = true;
             }
         }
 
@@ -115,48 +126,35 @@ namespace Bestagons
             }
 
             // Determine which side of each line the origin is on
-            CompareToLine(orgin, true);
+            CompareToLine(0, orgin, true);
 
             // Remove corners outside the polygon
-            CompareToLine(Vector2.Zero, false);
+            for (int i = corners.Count - 1; i >= 0; i--)
+            {
+                CompareToLine(i, corners[i]);
+            }
             SortCornersClockwise();
         }
 
-        void CompareToLine(Vector2 point, bool isOrigin = false)
+        void CompareToLine(int pointIndex, Vector2 point, bool isOrigin = false)
         {
-            if (!isOrigin)
+            for (int i = 0; i < functions.Count; i++)
             {
-                for (int i = corners.Count - 1; i >= 0; i--)
-                {
-                    bool isValid = true;
-                    for (int j = 0; j < functions.Count; j++)
-                    {
-                        float A = functions[j][0];
-                        float B = functions[j][1];
-                        float C = functions[j][2];
+                float A = functions[i][0];
+                float B = functions[i][1];
+                float C = functions[i][2];
 
-                        float d = A * corners[i].X + B * corners[i].Y + C;
+                float d = A * point.X + B * point.Y + C;
 
-                        if (functionRelation[j] * d < 0)
-                        {
-                            isValid = false;
-                            break;
-                        }
-                    }
-                    if (!isValid)
-                        corners.RemoveAt(i);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < functions.Count; i++)
-                {
-                    float A = functions[i][0];
-                    float B = functions[i][1];
-                    float C = functions[i][2];
-
-                    float d = A * point.X + B * point.Y + C;
+                if (isOrigin)
                     functionRelation.Add(Math.Sign(d));
+                else
+                {
+                    if (functionRelation[i] * d < 0)
+                    {
+                        corners.RemoveAt(pointIndex);
+                        break;
+                    }
                 }
             }
         }

@@ -17,9 +17,9 @@ List<Tile> bᛟᚨᛏ = new List<Tile>();
 // bᛟᚨᛏ.Add(new Tile(new(500,400)));
 // bᛟᚨᛏ.Add(new Tile(new(600,600)));
 
-for (int x = 5; x < Raylib.GetScreenWidth()-5; x++)
+for (int x = 5; x < Raylib.GetScreenWidth() - 5; x++)
 {
-    for (int y = 5; y < Raylib.GetScreenHeight()-5; y++)
+    for (int y = 5; y < Raylib.GetScreenHeight() - 5; y++)
     {
         if (Random.Shared.Next(100000) == 50)
         {
@@ -32,60 +32,67 @@ foreach (var ᚺᚨᚱ in bᛟᚨᛏ)
 {
     ᚺᚨᚱ.Define();
 }
-Raylib.BeginDrawing();
-
-foreach (var item in bᛟᚨᛏ)
+while (!Raylib.WindowShouldClose())
 {
-    item.Draw();
+    Raylib.BeginDrawing();
+    Raylib.ClearBackground(Color.Black);
+
+    foreach (var item in bᛟᚨᛏ)
+    {
+        item.Update();
+    }
+    foreach (var item in bᛟᚨᛏ)
+    {
+        item.Draw();
+    }
+    Tile.hideLines = false;
+
+    // foreach (Vector2 point in bᛟᚨᛏ)
+    // {
+    //     for (int i = 0; i < bᛟᚨᛏ.Count; i++)
+    //     {
+    //         Vector2 victor = bᛟᚨᛏ[i];
+    //         if (victor!=point)
+    //         {
+    //             Raylib.DrawLineV(victor,point,Color.Blue);
+    //             Vector2 middle = new(point.X+(victor.X-point.X)/2,point.Y+(victor.Y-point.Y)/2);
+    //             Raylib.DrawCircleV(middle,2,Color.Gold);
+    //             float k = (victor.Y-point.Y)/(victor.X-point.X);
+    //             float k2 = -1/k;
+    //             Vector2 Woff(float x)
+    //             {
+    //                 //y=kx+m    m=kx-y
+    //                 float m = k2*middle.X-middle.Y;
+    //                 return new(x,k2*x+m);
+    //             }
+    //             Raylib.DrawLineV(Woff(0),Woff(Raylib.GetScreenWidth()),Color.Green);
+    //         }
+    //     }
+    // }
+
+    // Vector2 orgin = bᛟᚨᛏ[0];
+    // for (int i = 0; i < bᛟᚨᛏ.Count; i++)
+    // {
+    //     Vector2 victor = bᛟᚨᛏ[i];
+    //     if (victor != orgin)
+    //     {
+    //         Raylib.DrawLineV(victor, orgin, Color.Blue);
+    //         Vector2 middle = new(orgin.X + (victor.X - orgin.X) / 2, orgin.Y + (victor.Y - orgin.Y) / 2);
+    //         Raylib.DrawCircleV(middle, 2, Color.Gold);
+    //         float k = (victor.Y - orgin.Y) / (victor.X - orgin.X);
+    //         float k2 = -1 / k;
+    //         Vector2 Woff(float x)
+    //         {
+    //             //y=kx+m    m=kx-y
+    //             float m = middle.Y - k2 * middle.X;
+    //             Console.WriteLine(x + " " + (k2 * x + m));
+    //             return new(x, k2 * x + m);
+    //         }
+    //         Raylib.DrawLineV(Woff(0), Woff(Raylib.GetScreenWidth()), Color.Green);
+    //     }
+    //     Raylib.DrawCircleV(bᛟᚨᛏ[i],4,Color.Red);
+    // }
+
+
+    Raylib.EndDrawing();
 }
-
-// foreach (Vector2 point in bᛟᚨᛏ)
-// {
-//     for (int i = 0; i < bᛟᚨᛏ.Count; i++)
-//     {
-//         Vector2 victor = bᛟᚨᛏ[i];
-//         if (victor!=point)
-//         {
-//             Raylib.DrawLineV(victor,point,Color.Blue);
-//             Vector2 middle = new(point.X+(victor.X-point.X)/2,point.Y+(victor.Y-point.Y)/2);
-//             Raylib.DrawCircleV(middle,2,Color.Gold);
-//             float k = (victor.Y-point.Y)/(victor.X-point.X);
-//             float k2 = -1/k;
-//             Vector2 Woff(float x)
-//             {
-//                 //y=kx+m    m=kx-y
-//                 float m = k2*middle.X-middle.Y;
-//                 return new(x,k2*x+m);
-//             }
-//             Raylib.DrawLineV(Woff(0),Woff(Raylib.GetScreenWidth()),Color.Green);
-//         }
-//     }
-// }
-
-// Vector2 orgin = bᛟᚨᛏ[0];
-// for (int i = 0; i < bᛟᚨᛏ.Count; i++)
-// {
-//     Vector2 victor = bᛟᚨᛏ[i];
-//     if (victor != orgin)
-//     {
-//         Raylib.DrawLineV(victor, orgin, Color.Blue);
-//         Vector2 middle = new(orgin.X + (victor.X - orgin.X) / 2, orgin.Y + (victor.Y - orgin.Y) / 2);
-//         Raylib.DrawCircleV(middle, 2, Color.Gold);
-//         float k = (victor.Y - orgin.Y) / (victor.X - orgin.X);
-//         float k2 = -1 / k;
-//         Vector2 Woff(float x)
-//         {
-//             //y=kx+m    m=kx-y
-//             float m = middle.Y - k2 * middle.X;
-//             Console.WriteLine(x + " " + (k2 * x + m));
-//             return new(x, k2 * x + m);
-//         }
-//         Raylib.DrawLineV(Woff(0), Woff(Raylib.GetScreenWidth()), Color.Green);
-//     }
-//     Raylib.DrawCircleV(bᛟᚨᛏ[i],4,Color.Red);
-// }
-
-
-Raylib.EndDrawing();
-
-Console.ReadLine();
