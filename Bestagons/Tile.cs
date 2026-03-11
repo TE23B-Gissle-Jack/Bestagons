@@ -23,15 +23,21 @@ namespace Bestagons
         {
             Raylib.DrawCircleV(orgin, 5, Color.Red);
 
-            foreach (var corner in corners)
+            if (corners.Count>1)
             {
-                Raylib.DrawCircleV(corner, 3, Color.Purple);
-
-                foreach (var other in corners)
+                Raylib.DrawLineV(corners[0], corners[corners.Count - 1], Color.Orange);
+            }
+            for (int i = 1; i < corners.Count; i++)
+            {
+                if (i!=corners.Count-1)
                 {
-                    if (other != corner)
-                        Raylib.DrawLineV(corner, other, Color.Orange);
+                    Raylib.DrawTriangle(corners[0],corners[i],corners[i+1], Color.Green);
                 }
+                Raylib.DrawLineV(corners[i], corners[i - 1], Color.Orange);   
+            }
+            foreach (var item in corners)
+            {
+                Raylib.DrawCircleV(item, 5, Color.Pink);
             }
         }
 
@@ -69,20 +75,16 @@ namespace Bestagons
 
                 // draw the line
                 if (B != 0)
-                    Raylib.DrawLineV(new Vector2(0, (-C - A * 0) / B),
-                                     new Vector2(Raylib.GetScreenWidth(), (-C - A * Raylib.GetScreenWidth()) / B),
-                                     Color.Green);
+                    Raylib.DrawLineV(new Vector2(0, (-C - A * 0) / B), new Vector2(Raylib.GetScreenWidth(), (-C - A * Raylib.GetScreenWidth()) / B), new(0, 255, 0, 50));
                 else
-                    Raylib.DrawLineV(new Vector2(-C / A, 0),
-                                     new Vector2(-C / A, Raylib.GetScreenHeight()),
-                                     Color.Green);
+                    Raylib.DrawLineV(new Vector2(-C / A, 0), new Vector2(-C / A, Raylib.GetScreenHeight()), new(0, 255, 0, 50));
             }
 
             // Add screen boundaries
             functions.Add([0, 1, -5]);
-            functions.Add([0, 1, -(Raylib.GetScreenHeight() - 5)]); 
-            functions.Add([1, 0, 0]);                         
-            functions.Add([1, 0, -Raylib.GetScreenWidth()]); 
+            functions.Add([0, 1, -(Raylib.GetScreenHeight() - 5)]);
+            functions.Add([1, 0, 0]);
+            functions.Add([1, 0, -Raylib.GetScreenWidth()]);
         }
 
         public void Define()
@@ -113,35 +115,75 @@ namespace Bestagons
             }
 
             // Determine which side of each line the origin is on
-            CompareToLine(0, orgin, true);
+            CompareToLine(orgin, true);
 
             // Remove corners outside the polygon
-            for (int i = corners.Count - 1; i >= 0; i--)
-            {
-                CompareToLine(i, corners[i]);
-            }
+            CompareToLine(Vector2.Zero, false);
+            SortCornersClockwise();
         }
 
-        void CompareToLine(int pointIndex, Vector2 point, bool isOrigin = false)
+        void CompareToLine(Vector2 point, bool isOrigin = false)
         {
-            for (int i = 0; i < functions.Count; i++)
+            if (!isOrigin)
             {
-                float A = functions[i][0];
-                float B = functions[i][1];
-                float C = functions[i][2];
-
-                float d = A * point.X + B * point.Y + C;
-
-                if (isOrigin)
-                    functionRelation.Add(Math.Sign(d));
-                else
+                for (int i = corners.Count - 1; i >= 0; i--)
                 {
-                    if (functionRelation[i] * d < 0)
+                    bool isValid = true;
+                    for (int j = 0; j < functions.Count; j++)
                     {
-                        corners.RemoveAt(pointIndex);
-                        break;
+                        float A = functions[j][0];
+                        float B = functions[j][1];
+                        float C = functions[j][2];
+
+                        float d = A * corners[i].X + B * corners[i].Y + C;
+
+                        if (functionRelation[j] * d < 0)
+                        {
+                            isValid = false;
+                            break;
+                        }
                     }
+                    if (!isValid)
+                        corners.RemoveAt(i);
                 }
+            }
+            else
+            {
+                for (int i = 0; i < functions.Count; i++)
+                {
+                    float A = functions[i][0];
+                    float B = functions[i][1];
+                    float C = functions[i][2];
+
+                    float d = A * point.X + B * point.Y + C;
+                    functionRelation.Add(Math.Sign(d));
+                }
+            }
+        }
+        void SortCornersClockwise()
+        {
+            if (corners.Count < 3) return;
+
+            // Compute center
+            Vector2 center = Vector2.Zero;
+            foreach (var c in corners)
+                center += c;
+
+            center /= corners.Count;
+
+            // Create a temporary list
+            List<(float, Vector2 point)> temp = new();
+
+            foreach (var corner in corners)
+            {
+                float angle = MathF.Atan2(corner.Y - center.Y, corner.X - center.X);
+                temp.Add((angle, corner));
+            }
+            temp.Sort();
+            corners.Clear();
+            foreach (var thing in temp)
+            {
+                corners.Add(thing.point);
             }
         }
     }

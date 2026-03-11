@@ -27,7 +27,11 @@ for (int x = 5; x < Raylib.GetScreenWidth()-5; x++)
         }
     }
 }
-bᛟᚨᛏ[0].Define();
+//bᛟᚨᛏ[0].Define();
+foreach (var ᚺᚨᚱ in bᛟᚨᛏ)
+{
+    ᚺᚨᚱ.Define();
+}
 Raylib.BeginDrawing();
 
 foreach (var item in bᛟᚨᛏ)
