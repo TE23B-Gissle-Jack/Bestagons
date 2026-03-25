@@ -25,13 +25,13 @@ namespace Bestagons
         public void Draw()
         {
             Raylib.DrawCircleV(orgin, 5, Color.Red);
-            if (!hideLines||hovered)
+            if (!hideLines || hovered)
             {
-                if(corners.Count > 1)
+                if (corners.Count > 1)
                 {
                     Raylib.DrawLineV(corners[0], corners[corners.Count - 1], lineColor);
                 }
-                
+
                 for (int i = 1; i < corners.Count; i++)
                 {
                     Raylib.DrawLineV(corners[i], corners[i - 1], lineColor);
@@ -62,25 +62,9 @@ namespace Bestagons
                 float dx = victor.X - orgin.X;
                 float dy = victor.Y - orgin.Y;
 
-                float A, B, C;
-
-                if (Math.Abs(dx) < 0.0001f)
-                {
-                    A = 0; B = 1; C = -middle.Y;
-                }
-                else if (Math.Abs(dy) < 0.0001f)
-                {
-                    A = 1; B = 0; C = -middle.X;
-                }
-                else
-                {
-                    float k = dy / dx;
-                    float k2 = -1 / k;
-                    float m = middle.Y - k2 * middle.X;
-
-                    // y = k2*x + m → k2*x - y + m = 0
-                    A = k2; B = -1; C = m;
-                }
+                float A = dx;
+                float B = dy;
+                float C = -(A * middle.X + B * middle.Y);
 
                 functions.Add([A, B, C]);
 
@@ -100,6 +84,10 @@ namespace Bestagons
 
         public void Define()
         {
+            functions.Clear();
+            functionRelation.Clear();
+            corners.Clear();
+
             Compare();
 
             // Calculate intersections
@@ -150,7 +138,7 @@ namespace Bestagons
                     functionRelation.Add(Math.Sign(d));
                 else
                 {
-                    if (functionRelation[i] * d < 0)
+                    if (functionRelation[i] * d < -0.0001f)
                     {
                         corners.RemoveAt(pointIndex);
                         break;
