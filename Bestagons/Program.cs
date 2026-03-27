@@ -21,7 +21,7 @@ for (int x = 5; x < Raylib.GetScreenWidth() - 5; x++)
 {
     for (int y = 5; y < Raylib.GetScreenHeight() - 5; y++)
     {
-        if (Random.Shared.Next(100000) == 50)
+        if (Random.Shared.Next(500) == 50)
         {
             bᛟᚨᛏ.Add(new Tile(new(x, y)));
         }
@@ -32,6 +32,7 @@ foreach (var ᚺᚨᚱ in bᛟᚨᛏ)
 {
     ᚺᚨᚱ.Define();
 }
+
 while (!Raylib.WindowShouldClose())
 {
     Raylib.BeginDrawing();
