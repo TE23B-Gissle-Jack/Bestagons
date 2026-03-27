@@ -16,7 +16,7 @@ namespace Bestagons
         List<float> functionRelation = new List<float>();
         public static bool hideLines = false;
         bool hovered = false;
-        Color lineColor = new(122 + Random.Shared.Next(122), 122 + Random.Shared.Next(122), 122 + Random.Shared.Next(122));
+        Color fillColor = new(122 + Random.Shared.Next(122), 122 + Random.Shared.Next(122), 122 + Random.Shared.Next(122));
 
         bool fortniteOG = false;
         List<Vector2> polygon;
@@ -36,17 +36,8 @@ namespace Bestagons
         public void Draw()
         {
             //Raylib.DrawCircleV(orgin, 5, Color.Red);
-            if (!hideLines || hovered)
-            {
-                if (corners.Count > 1)
-                {
-                    Raylib.DrawLineV(corners[0], corners[corners.Count - 1], lineColor);
-                }
-
-                for (int i = 1; i < corners.Count; i++)
-                {
-                    Raylib.DrawLineV(corners[i], corners[i - 1], lineColor);
-                }
+              
+                //filling
                 if (corners.Count > 2)
                 {
                     Vector2 center = Vector2.Zero;
@@ -59,30 +50,41 @@ namespace Bestagons
 
                     for (int i = 0; i < corners.Count; i++)
                     {
-                        fan[i + 1] = corners[i];
+                        fan[i + 1] = corners[i]; 
                     }
 
-                    Raylib.DrawTriangleFan(fan, fan.Length, lineColor);
+                    for (int i = 1; i < corners.Count; i++)
+                    {
+                        Raylib.DrawTriangle(center,corners[i],corners[i-1],fillColor);
+                    }   
+                    Raylib.DrawTriangle(center,corners[0],corners[corners.Count-1],fillColor);
+                }
+                //outline
+                if (corners.Count > 1)
+                {
+                    int thicknes = 2;
+                    if (hovered) thicknes = 5;
+                    //Raylib.DrawLineV(corners[0], corners[corners.Count - 1], lineColor);
+                    Vector2[] yeah = new Vector2[corners.Count+1];
+                    for (int i = 0; i < corners.Count; i++)
+                    {
+                        yeah[i] = corners[i];
+                    }
+                    yeah[corners.Count]=corners[0];
 
-                    Raylib.DrawTriangleFan(corners.ToArray(), corners.Count, lineColor);
+                    Raylib.DrawSplineLinear(yeah,yeah.Length,thicknes,Color.Black);
                 }
                 foreach (var item in corners)
                 {
                     //Raylib.DrawCircleV(item, 5, Color.Pink);
                 }
-                if (hovered)
-                {
-                    foreach (Vector2 item in deadCorners)
-                    {
-                        Raylib.DrawCircleV(item, 5, Color.DarkBlue);
-                    }
-                }
-            }
 
         }
         public void Update()
         {
-            hovered = Raylib.CheckCollisionPointCircle(Raylib.GetMousePosition(), orgin, 5);
+            //    bool CheckCollisionPointPoly(Vector2 point, const Vector2 *points, int pointCount);                // Check if point is within a polygon described by array of vertices
+
+            hovered = Raylib.CheckCollisionPointPoly(Raylib.GetMousePosition(),corners.ToArray());                      //Raylib.CheckCollisionPointCircle(Raylib.GetMousePosition(), orgin, 5);
             if (hovered)
             {
                 hideLines = true;
@@ -118,7 +120,6 @@ namespace Bestagons
             functions.Add([1, 0, 0]);
             functions.Add([1, 0, -Raylib.GetScreenWidth()]);
         }
-
         public void Define()
         {
             if (fortniteOG)
@@ -212,8 +213,6 @@ namespace Bestagons
                 corners = poly;
             }
         }
-
-
         void CompareToLine(int pointIndex, Vector2 point, bool isOrigin = false)
         {
             for (int i = 0; i < functions.Count; i++)
@@ -263,7 +262,6 @@ namespace Bestagons
                 corners.Add(thing.point);
             }
         }
-
         List<Vector2> ClipPoly(List<Vector2> input, float A, float B, float C)
         {
             List<Vector2> output = new();
