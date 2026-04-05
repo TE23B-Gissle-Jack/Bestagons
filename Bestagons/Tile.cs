@@ -12,14 +12,31 @@ namespace Bestagons
         List<Vector2> corners = new List<Vector2>();
         List<Vector2> deadCorners = new List<Vector2>();
 
+        Vector2 center = Vector2.Zero;
+
         List<float[]> functions = new List<float[]>(); // [A, B, C]
         List<float> functionRelation = new List<float>();
-        public static bool hideLines = false;
+
+        public static bool hideLines = false;//for testing
         bool hovered = false;
-        Color fillColor = new(122 + Random.Shared.Next(122), 122 + Random.Shared.Next(122), 122 + Random.Shared.Next(122));
+
+        protected Color baseColor = Color.Gray;
+        protected Color fillColor = new(50 + Random.Shared.Next(195), 50 + Random.Shared.Next(195), 50 + Random.Shared.Next(195));
+        protected Color lineColor = Color.Black;
+        protected Color textColor = Color.Black;
+
+        int lineThicknes = 2;
+        int lineHoverThicknes = 4;
+        List<Vector2> baseLineCorners = new List<Vector2>();
+        List<Vector2> hoverLineCorners = new List<Vector2>();
 
         bool fortniteOG = false;
         List<Vector2> polygon;
+
+        int trops = 0;
+        protected Player owner = null;
+
+
 
         public Tile(Vector2 position)
         {
@@ -33,58 +50,107 @@ namespace Bestagons
                 };
         }
 
-        public void Draw()
+        public virtual void Draw()
         {
             //Raylib.DrawCircleV(orgin, 5, Color.Red);
-              
-                //filling
-                if (corners.Count > 2)
+            DrawFilling(fillColor);
+            DrawOutline(lineColor);
+            DrawTroops([textColor],[5], 20);
+        }
+        protected void DrawFilling(Color color)
+        {
+            //filling
+            if (corners.Count > 2)
+            {
+                Vector2[] fan = new Vector2[corners.Count + 1];
+                fan[0] = center;
+
+                for (int i = 0; i < corners.Count; i++)
                 {
-                    Vector2 center = Vector2.Zero;
-                    foreach (var c in corners) center += c;
-
-                    center /= corners.Count;
-
-                    Vector2[] fan = new Vector2[corners.Count + 1];
-                    fan[0] = center;
-
-                    for (int i = 0; i < corners.Count; i++)
-                    {
-                        fan[i + 1] = corners[i]; 
-                    }
-
-                    for (int i = 1; i < corners.Count; i++)
-                    {
-                        Raylib.DrawTriangle(center,corners[i],corners[i-1],fillColor);
-                    }   
-                    Raylib.DrawTriangle(center,corners[0],corners[corners.Count-1],fillColor);
-                }
-                //outline
-                if (corners.Count > 1)
-                {
-                    int thicknes = 2;
-                    if (hovered) thicknes = 5;
-                    //Raylib.DrawLineV(corners[0], corners[corners.Count - 1], lineColor);
-                    Vector2[] yeah = new Vector2[corners.Count+1];
-                    for (int i = 0; i < corners.Count; i++)
-                    {
-                        yeah[i] = corners[i];
-                    }
-                    yeah[corners.Count]=corners[0];
-
-                    Raylib.DrawSplineLinear(yeah,yeah.Length,thicknes,Color.Black);
-                }
-                foreach (var item in corners)
-                {
-                    //Raylib.DrawCircleV(item, 5, Color.Pink);
+                    fan[i + 1] = corners[i];
                 }
 
+                for (int i = 1; i < corners.Count; i++)
+                {
+                    Raylib.DrawTriangle(center, corners[i], corners[i - 1], color);
+                }
+                Raylib.DrawTriangle(center, corners[0], corners[corners.Count - 1], color);
+            }
+        }
+        protected void DrawOutline(Color color)
+        {
+            //outline
+            if (corners.Count > 1)
+            {
+                int thicknes = lineThicknes;
+                List<Vector2> defining = baseLineCorners;
+                if (hovered)
+                {
+                    thicknes = lineHoverThicknes;
+                    defining = hoverLineCorners;
+                }
+                //Raylib.DrawLineV(corners[0], corners[corners.Count - 1], lineColor);
+                Vector2[] yeah = new Vector2[defining.Count + 1];
+                for (int i = 0; i < defining.Count; i++)
+                {
+                    yeah[i] = defining[i];
+                }
+                yeah[defining.Count] = defining[0];
+
+                Raylib.DrawSplineLinear(yeah, yeah.Length, thicknes, color);
+            }
+        }
+        protected virtual void DrawTroops(Color[] colors, int[] thickness, int textSize)
+        {
+            string text = "" + trops;
+            int k = 0; //i dont want to think
+            for (int i = 0; i < colors.Length; i++)
+            {
+                for (int j = 0; j < thickness[i]; j++)
+                {
+                    Raylib.DrawText(text, (int)center.X+k/3, (int)center.Y+k/2, textSize-i, colors[i]);
+                    if (textSize-k > 1) k++;
+                }
+            }
+        }
+        public bool defend(int attaking)
+        {
+            while (attaking > 0 && trops > 0)
+            {
+                int attacker = Random.Shared.Next(10);
+                int defender = Random.Shared.Next(10);
+                if (defender >= attacker)
+                {
+                    attaking -= 1;
+                }
+                else trops -= 1;
+            }
+            if (trops > 0)
+            {
+                return true;
+            }
+            else return false;
+        }
+        public bool attack(Tile target, int amt)
+        {
+            if (!target.defend(amt))
+            {
+                target.changeOwner(owner);
+                return true;
+            }
+            return false;
+        }
+        public virtual void changeOwner(Player target)
+        {
+            owner = target;
+            if (target != null) fillColor = target.color;
+            else fillColor = baseColor;
         }
         public void Update()
         {
             //    bool CheckCollisionPointPoly(Vector2 point, const Vector2 *points, int pointCount);                // Check if point is within a polygon described by array of vertices
 
-            hovered = Raylib.CheckCollisionPointPoly(Raylib.GetMousePosition(),corners.ToArray());                      //Raylib.CheckCollisionPointCircle(Raylib.GetMousePosition(), orgin, 5);
+            hovered = Raylib.CheckCollisionPointPoly(Raylib.GetMousePosition(), corners.ToArray());                      //Raylib.CheckCollisionPointCircle(Raylib.GetMousePosition(), orgin, 5);
             if (hovered)
             {
                 hideLines = true;
@@ -211,6 +277,21 @@ namespace Bestagons
                 }
 
                 corners = poly;
+            }
+
+            findCenter();
+            foreach (var corner in corners)
+            {
+                Vector2 direction = center - corner;
+                baseLineCorners.Add(corner + direction / direction.Length() * lineThicknes / 2);
+                hoverLineCorners.Add(corner + direction / direction.Length() * lineHoverThicknes / 2);
+            }
+            void findCenter()
+            {
+                center = Vector2.Zero;
+                foreach (var c in corners) center += c;
+
+                center /= corners.Count;
             }
         }
         void CompareToLine(int pointIndex, Vector2 point, bool isOrigin = false)

@@ -12,7 +12,7 @@ Raylib.SetExitKey(KeyboardKey.Null);
 List<Tile> bᛟᚨᛏ = new List<Tile>();
 // bᛟᚨᛏ.Add(new Tile(new(500,500)));
 // bᛟᚨᛏ.Add(new Tile(new(600,500)));
-// bᛟᚨᛏ.Add(new Tile(new(700,550)));
+// bᛟᚨᛏ.Add(new Tile(new(700,550)));P
 // bᛟᚨᛏ.Add(new Tile(new(400,500)));
 // bᛟᚨᛏ.Add(new Tile(new(500,400)));
 // bᛟᚨᛏ.Add(new Tile(new(600,600)));
@@ -23,9 +23,20 @@ for (int x = 5; x < Raylib.GetScreenWidth() - 5; x++)
     {
         if (Random.Shared.Next(5000) == 50)
         {
-            bᛟᚨᛏ.Add(new Tile(new(x, y)));
+            if(Random.Shared.Next(3)==0) bᛟᚨᛏ.Add(new WAter(new(x, y)));
+            else bᛟᚨᛏ.Add(new Land(new(x, y)));
         }
     }
+}
+Player red = new Player("Red",Color.Red);
+Player blue = new Player("Blue",Color.Green);
+for (int i = 0; i < bᛟᚨᛏ.Count; i++)
+{
+    if(Random.Shared.Next(2)==0)
+    {
+        bᛟᚨᛏ[i].changeOwner(red);
+    }
+    else bᛟᚨᛏ[i].changeOwner(blue);
 }
 //bᛟᚨᛏ[0].Define();
 foreach (var ᚺᚨᚱ in bᛟᚨᛏ)
