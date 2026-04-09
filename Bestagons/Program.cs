@@ -57,6 +57,10 @@ while (!Raylib.WindowShouldClose())
     {
         item.Draw();
     }
+    foreach (var item in bᛟᚨᛏ)
+    {
+        item.Draw2();
+    }
     Tile.hideLines = false;
 
     // foreach (Vector2 point in bᛟᚨᛏ)

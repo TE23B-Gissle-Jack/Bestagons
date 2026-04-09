@@ -15,7 +15,7 @@ public class WAter : Tile
     {
         DrawFilling(baseColor);
         DrawOutline(lineColor);
-        DrawTroops([textColor,fillColor],[15,5], 50);
+        //DrawTroops([textColor,fillColor],[15,5], 50);
 
     }
     // public override void changeOwner(Player target)

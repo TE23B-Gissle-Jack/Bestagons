@@ -19,6 +19,7 @@ namespace Bestagons
 
         public static bool hideLines = false;//for testing
         bool hovered = false;
+        bool selected = false;
 
         protected Color baseColor = Color.Gray;
         protected Color fillColor = new(50 + Random.Shared.Next(195), 50 + Random.Shared.Next(195), 50 + Random.Shared.Next(195));
@@ -54,8 +55,21 @@ namespace Bestagons
         {
             //Raylib.DrawCircleV(orgin, 5, Color.Red);
             DrawFilling(fillColor);
+            //DrawTroops([textColor],[5], 20);
+        }
+        public void Draw2()//layering bullshit
+        {
             DrawOutline(lineColor);
-            DrawTroops([textColor],[5], 20);
+            if (selected)
+            {
+                Raylib.DrawLineEx(center, Raylib.GetMousePosition(), 10, Color.Black);
+
+                Vector2 direction = center - Raylib.GetMousePosition();
+
+                float angle = MathF.Atan2(direction.Y, direction.X);
+
+                Raylib.DrawTriangle(Raylib.GetMousePosition(),)
+            }
         }
         protected void DrawFilling(Color color)
         {
@@ -84,7 +98,7 @@ namespace Bestagons
             {
                 int thicknes = lineThicknes;
                 List<Vector2> defining = baseLineCorners;
-                if (hovered)
+                if (hovered || selected)
                 {
                     thicknes = lineHoverThicknes;
                     defining = hoverLineCorners;
@@ -108,8 +122,8 @@ namespace Bestagons
             {
                 for (int j = 0; j < thickness[i]; j++)
                 {
-                    Raylib.DrawText(text, (int)center.X+k/3, (int)center.Y+k/2, textSize-i, colors[i]);
-                    if (textSize-k > 1) k++;
+                    Raylib.DrawText(text, (int)center.X + k / 3, (int)center.Y + k / 2, textSize - i, colors[i]);
+                    if (textSize - k > 1) k++;
                 }
             }
         }
@@ -153,7 +167,17 @@ namespace Bestagons
             hovered = Raylib.CheckCollisionPointPoly(Raylib.GetMousePosition(), corners.ToArray());                      //Raylib.CheckCollisionPointCircle(Raylib.GetMousePosition(), orgin, 5);
             if (hovered)
             {
-                hideLines = true;
+                //hideLines = true;
+                if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+                {
+                    selected = true;
+                }
+            }
+            //defacto means something else is hoverd and then selected
+            //will not work that way in a sec
+            else if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+            {
+                selected = false;
             }
         }
 
