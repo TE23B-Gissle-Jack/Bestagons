@@ -62,13 +62,26 @@ namespace Bestagons
             DrawOutline(lineColor);
             if (selected)
             {
-                Raylib.DrawLineEx(center, Raylib.GetMousePosition(), 10, Color.Black);
+                Vector2 mouse = Raylib.GetMousePosition();
 
-                Vector2 direction = center - Raylib.GetMousePosition();
+                Vector2 direction = center - mouse;
 
                 float angle = MathF.Atan2(direction.Y, direction.X);
 
-                Raylib.DrawTriangle(Raylib.GetMousePosition(),)
+                List<Vector2> triangle = [new Vector2(10,0), new Vector2(50,20), new Vector2(50,-20)];
+                List<Vector2> real = new List<Vector2>();
+                for (int i = 0; i < triangle.Count; i++)
+                {
+                    Vector2 point = triangle[i];
+                    real.Add(new Vector2(
+                        mouse.X+point.X*MathF.Cos(angle)-point.Y*MathF.Sin(angle),
+                        mouse.Y+point.Y*MathF.Cos(angle)+point.X*MathF.Sin(angle)
+                //         this.position.x + x * cos - y * sin,
+                //         this.position.y + y * cos + x * sin
+                    ));
+                }
+                Raylib.DrawLineEx(center, real[0], 10, Color.Black);
+                Raylib.DrawTriangle(mouse,real[1],real[2],Color.Black);
             }
         }
         protected void DrawFilling(Color color)
