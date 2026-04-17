@@ -5,7 +5,7 @@ namespace Bestagons;
 
 public class Player
 {
-    string name;
+    public string name;
     public Color color;
     public Player(string name, Color color)
     {

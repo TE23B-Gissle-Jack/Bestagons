@@ -6,13 +6,13 @@ namespace Bestagons;
 
 public class Button
 {
-    string text;
+    protected string text;
     Color color;
     Color lineColor;
     int lineThickness;
     Rectangle rect;
 
-    bool selected = false;
+    protected bool selected = false;
     bool hovered = false;
 
     Action thing;
@@ -26,7 +26,7 @@ public class Button
         rect = new Rectangle(position.X, position.Y, size.X, size.Y);
         lineThickness = 2;
     }
-    public void Update()
+    public virtual void Update()
     {
         hovered = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), rect);
         if (hovered|| selected)
@@ -58,5 +58,9 @@ public class Button
         Vector2 textSize = Raylib.MeasureTextEx(Raylib.GetFontDefault(), text, 20, 1);
         Vector2 textPos = new Vector2(rect.X + rect.Width / 2 - textSize.X / 2, rect.Y + rect.Height / 2 - textSize.Y / 2);
         Raylib.DrawTextEx(Raylib.GetFontDefault(), text, textPos, 20, 1, Color.Black);
+    }
+    public void ChangeAction(Action newThing)
+    {
+        thing = newThing;
     }
 }

@@ -30,7 +30,7 @@ for (int x = 5; x < Raylib.GetScreenWidth() - 5; x++)
 }
 Player red = new Player("Red",Color.Red);
 Player blue = new Player("Blue",Color.Green);
-Menu test = new Menu("Test", new Rectangle(100, 100, 200, 300), new string[] { "Button1", "Button2" }, new Action[] { () => Console.WriteLine("Button1 clicked"), () => Console.WriteLine("Button2 clicked") });
+TileMenu test = new TileMenu("Owner: Red", new Rectangle(100, 100, 200, 300), new string[] { "Attack", "Move Troops" }, new Action[] { () => Console.WriteLine("Button1 clicked"), () => Console.WriteLine("Button2 clicked") },0);
 for (int i = 0; i < bᛟᚨᛏ.Count; i++)
 {
     if(Random.Shared.Next(2)==0)
@@ -64,8 +64,8 @@ while (!Raylib.WindowShouldClose())
     }
     Tile.hideLines = false;
 
-    test.Update();
-    test.Draw();
+    // test.Update();
+    // test.Draw();
 
     // foreach (Vector2 point in bᛟᚨᛏ)
     // {
