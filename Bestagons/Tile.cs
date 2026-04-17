@@ -84,8 +84,14 @@ public class Tile
             }
             Raylib.DrawLineEx(center, real[0], 10, Color.Black);
             Raylib.DrawTriangle(mouse, real[1], real[2], Color.Black);
-            test.Draw();
         }
+    }
+    public void Draw3()//should probobly nort extist
+    {
+        if (selected)
+        {
+            test.Draw();
+        }  
     }
     protected void DrawFilling(Color color)
     {
@@ -194,7 +200,6 @@ public class Tile
     public void Update()
     {
         //    bool CheckCollisionPointPoly(Vector2 point, const Vector2 *points, int pointCount);                // Check if point is within a polygon described by array of vertices
-
         hovered = Raylib.CheckCollisionPointPoly(Raylib.GetMousePosition(), corners.ToArray());                      //Raylib.CheckCollisionPointCircle(Raylib.GetMousePosition(), orgin, 5);
         if (hovered)
         {
@@ -209,6 +214,10 @@ public class Tile
         else if (Raylib.IsMouseButtonPressed(MouseButton.Left))
         {
             selected = false;
+        }
+        if (selected)
+        {
+            test.Update();
         }
     }
 

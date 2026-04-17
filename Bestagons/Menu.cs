@@ -27,7 +27,7 @@ public class Menu
         }
     }
 
-    public void Update()
+    public virtual void Update()
     {
         foreach (Button button in buttons)
         {

@@ -62,6 +62,10 @@ while (!Raylib.WindowShouldClose())
     {
         item.Draw2();
     }
+    foreach (var item in bᛟᚨᛏ)
+    {
+        item.Draw3();
+    }
     Tile.hideLines = false;
 
     // test.Update();

@@ -7,6 +7,10 @@ namespace Bestagons;
 public class TileMenu: Menu
 {
     int troopCount;
+
+    int attackCount = 0;
+    int moveCount = 0;
+
     public TileMenu(string title, Rectangle bigbox, string[] btnText, Action[] btnActions, int troopCount) : base(title, bigbox, btnText, btnActions)
     {
         for (int i = 0; i < btnText.Length; i++)
@@ -32,6 +36,21 @@ public class TileMenu: Menu
         {
             button.Draw();
         }
+    }
+    public override void Update()
+    {
+        base.Update();
+
+        attackCount = ((CountBtn)buttons[2]).Amt;    
+        moveCount = ((CountBtn)buttons[3]).Amt;
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine(((CountBtn)buttons[2]).Amt); 
+        Console.ForegroundColor = ConsoleColor.White;
+
+        //Console.WriteLine(((CountBtn)buttons[3]).Amt);
+
+        buttons[0].ChangeAction(() => Console.WriteLine("Attack: " + attackCount));
+        buttons[1].ChangeAction(() => Console.WriteLine("Move: " + moveCount));   
     }
     Vector2 pos(int basePos,int size, string text)
     {

@@ -54,8 +54,8 @@ public class CountBtn : Button
                 }
                 //should not fail so who cares.. not my problem
                 int.TryParse(text, out count);
+                Console.WriteLine(key);
             }
-            Console.WriteLine(key);
         }
     }
 }
