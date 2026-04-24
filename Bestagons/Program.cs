@@ -9,6 +9,7 @@ Raylib.InitWindow(1400, 700, "Kraka Kapaw");
 Raylib.SetTargetFPS(60);
 Raylib.SetExitKey(KeyboardKey.Null);
 
+
 List<Tile> bᛟᚨᛏ = new List<Tile>();
 // bᛟᚨᛏ.Add(new Tile(new(500,500)));
 // bᛟᚨᛏ.Add(new Tile(new(600,500)));
@@ -30,7 +31,7 @@ for (int x = 5; x < Raylib.GetScreenWidth() - 5; x++)
 }
 Player red = new Player("Red",Color.Red);
 Player blue = new Player("Blue",Color.Green);
-TileMenu test = new TileMenu("Owner: Red", new Rectangle(100, 100, 200, 300), new string[] { "Attack", "Move Troops" }, new Action[] { () => Console.WriteLine("Button1 clicked"), () => Console.WriteLine("Button2 clicked") },0);
+//TileMenu test = new TileMenu("Owner: Red", new Rectangle(100, 100, 200, 300), new string[] { "Attack", "Move Troops" }, new Action[] { () => Console.WriteLine("Button1 clicked"), () => Console.WriteLine("Button2 clicked") },0);
 for (int i = 0; i < bᛟᚨᛏ.Count; i++)
 {
     if(Random.Shared.Next(2)==0)

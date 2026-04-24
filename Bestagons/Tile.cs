@@ -9,6 +9,8 @@ public class Tile
 {
     Vector2 orgin;
     static List<Vector2> tilePositions = new List<Vector2>();
+    static List<Tile> tiles = new List<Tile>();
+
     List<Vector2> corners = new List<Vector2>();
     List<Vector2> deadCorners = new List<Vector2>();
 
@@ -35,7 +37,22 @@ public class Tile
     List<Vector2> polygon;
 
     int trops;// = 0;
+    public bool attacking { get; set; }
+    int attackingTroops = 0;
+    public int Troops
+    {
+        get
+        {
+            return attackingTroops;
+        }
+        set
+        {
+            attackingTroops = Math.Min(trops-1, value);
+        }
+    }
     protected Player owner = null;
+
+    static bool mouseDoingOherShit = false;
 
     TileMenu test;
 
@@ -43,13 +60,14 @@ public class Tile
     {
         orgin = position;
         tilePositions.Add(position);
+        tiles.Add(this);
         this.polygon = new(){
                     new Vector2(0, 0),
                     new Vector2(Raylib.GetScreenWidth(), 0),
                     new Vector2(Raylib.GetScreenWidth(), Raylib.GetScreenHeight()),
                     new Vector2(0, Raylib.GetScreenHeight())
                 };
-        test = new TileMenu("Owner: " + owner?.name, new Rectangle(100, 100, 200, 300), new string[] { "Attack", "Move Troops" }, new Action[] { () => Console.WriteLine("Button1 clicked"), () => Console.WriteLine("Button2 clicked") }, trops);
+        test = new TileMenu("Owner: " + owner?.name, new Rectangle(100, 100, 200, 300), new string[] { "Attack", "Move Troops" }, new Action[] { () => Console.WriteLine("Button1 clicked"), () => Console.WriteLine("Button2 clicked") },2, trops, this);
         trops = Random.Shared.Next(1, 10);
     }
 
@@ -62,7 +80,7 @@ public class Tile
     public void Draw2()//layering bullshit
     {
         DrawOutline(lineColor);
-        if (selected)
+        if (attacking)
         {
             Vector2 mouse = Raylib.GetMousePosition();
 
@@ -88,10 +106,10 @@ public class Tile
     }
     public void Draw3()//should probobly nort extist
     {
-        if (selected)
+        if (selected && !attacking)
         {
             test.Draw();
-        }  
+        }
     }
     protected void DrawFilling(Color color)
     {
@@ -163,31 +181,43 @@ public class Tile
         }
         if (trops > 0)
         {
-            test = new TileMenu("Owner: " + owner?.name, new Rectangle(100, 100, 200, 300), new string[] { "Attack", "Move Troops" }, new Action[] { () => Console.WriteLine("Button1 clicked"), () => Console.WriteLine("Button2 clicked") }, trops);
+            test = new TileMenu("Owner: " + owner?.name, new Rectangle(100, 100, 200, 300), new string[] { "Attack", "Move Troops" }, new Action[] { () => Console.WriteLine("Button1 clicked"), () => Console.WriteLine("Button2 clicked") }, 2, trops, this);
             return true;
         }
         else
         {
-            test = new TileMenu("Owner: " + owner?.name, new Rectangle(100, 100, 200, 300), new string[] { "Attack", "Move Troops" }, new Action[] { () => Console.WriteLine("Button1 clicked"), () => Console.WriteLine("Button2 clicked") }, trops);
+            test = new TileMenu("Owner: " + owner?.name, new Rectangle(100, 100, 200, 300), new string[] { "Attack", "Move Troops" }, new Action[] { () => Console.WriteLine("Button1 clicked"), () => Console.WriteLine("Button2 clicked") }, 2, trops, this);
+            trops = attaking;
             return false;
         }
     }
-    public bool attack(Tile target, int amt)
+    bool attack(Tile target, int amt)
     {
+        Console.WriteLine("Attack! " + amt);
         if (!target.defend(amt))
         {
             target.changeOwner(owner);
             //stupid
-            test = new TileMenu("Owner: " + owner?.name, new Rectangle(100, 100, 200, 300), new string[] { "Attack", "Move Troops" }, new Action[] { () => Console.WriteLine("Button1 clicked"), () => Console.WriteLine("Button2 clicked") }, trops);
+            test = new TileMenu("Owner: " + owner?.name, new Rectangle(100, 100, 200, 300), new string[] { "Attack", "Move Troops" }, new Action[] { () => Console.WriteLine("Button1 clicked"), () => Console.WriteLine("Button2 clicked") }, 2, trops, this);
+            attacking = false;
+            selected = false;
+            mouseDoingOherShit = false;
             return true;
         }
         //stupid
-        test = new TileMenu("Owner: " + owner?.name, new Rectangle(100, 100, 200, 300), new string[] { "Attack", "Move Troops" }, new Action[] { () => Console.WriteLine("Button1 clicked"), () => Console.WriteLine("Button2 clicked") }, trops);
+        test = new TileMenu("Owner: " + owner?.name, new Rectangle(100, 100, 200, 300), new string[] { "Attack", "Move Troops" }, new Action[] { () => Console.WriteLine("Button1 clicked"), () => Console.WriteLine("Button2 clicked") }, 2, trops, this);
+        trops-=amt;
+        attacking = false;
+        selected = false;
+        mouseDoingOherShit = false;
         return false;
-    }
-    void selectTarget(Tile target)
+    }   //  TANGENT
+    bool CheckTarget(Tile target)
     {
-        
+        if (target == null) return false;
+        else if (target == this) return false;
+        else if (target.owner == owner) return true;
+        else return false;//idk
     }
     public virtual void changeOwner(Player target)
     {
@@ -195,7 +225,7 @@ public class Tile
         if (target != null) fillColor = target.color;
         else fillColor = baseColor;
         //stupid
-        test = new TileMenu("Owner: " + owner?.name, new Rectangle(100, 100, 200, 300), new string[] { "Attack", "Move Troops" }, new Action[] { () => Console.WriteLine("Button1 clicked"), () => Console.WriteLine("Button2 clicked") }, trops);
+        test = new TileMenu("Owner: " + owner?.name, new Rectangle(100, 100, 200, 300), new string[] { "Attack", "Move Troops" }, new Action[] { () => Console.WriteLine("Button1 clicked"), () => Console.WriteLine("Button2 clicked") }, 2, trops, this);
     }
     public void Update()
     {
@@ -204,22 +234,41 @@ public class Tile
         if (hovered)
         {
             //hideLines = true;
-            if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+            if (Raylib.IsMouseButtonPressed(MouseButton.Left) && !mouseDoingOherShit)
             {
                 selected = true;
+                mouseDoingOherShit = true;
             }
         }
         //defacto means something else is hoverd and then selected
         //will not work that way in a sec
-        else if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+        else if (Raylib.IsMouseButtonPressed(MouseButton.Right))
         {
             selected = false;
+            mouseDoingOherShit = false;
+            attacking = false;
         }
         if (selected)
         {
             test.Update();
         }
+        if (attacking)
+        {
+            if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+            {
+                foreach (Tile tile in tiles)
+                {
+                    if (tile.hovered)
+                    {
+                        if (CheckTarget(tile)) continue;
+                        attack(tile, attackingTroops);
+                    }
+                }
+            }
+        }
     }
+
+
 
 
     void Compare()

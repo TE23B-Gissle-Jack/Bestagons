@@ -11,7 +11,9 @@ public class TileMenu: Menu
     int attackCount = 0;
     int moveCount = 0;
 
-    public TileMenu(string title, Rectangle bigbox, string[] btnText, Action[] btnActions, int troopCount) : base(title, bigbox, btnText, btnActions)
+    Tile owner; 
+                                                                                            //stupid
+    public TileMenu(string title, Rectangle bigbox, string[] btnText, Action[] btnActions, int sliders, int troopCount, Tile stepBro) : base(title, bigbox, btnText, btnActions)
     {
         for (int i = 0; i < btnText.Length; i++)
         {
@@ -19,6 +21,7 @@ public class TileMenu: Menu
             //buttons.Add(new Button(btnText[i], Color.Gray, Color.Black, new Vector2(bigbox.X + 30, bigbox.Y + 90 + i * 40), new Vector2((int)bigbox.Width - 60, 20), btnActions[i]));
             buttons.Add(new CountBtn("0", Color.White, Color.Black, new Vector2(bigbox.X + 30, bigbox.Y + 100 + i * 60), new Vector2((int)bigbox.Width - 60, 25), Console.WriteLine));
             this.troopCount = troopCount;
+            owner = stepBro;
         }
     }
     public override void Draw()
@@ -44,12 +47,12 @@ public class TileMenu: Menu
         attackCount = ((CountBtn)buttons[2]).Amt;    
         moveCount = ((CountBtn)buttons[3]).Amt;
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine(((CountBtn)buttons[2]).Amt); 
+        //Console.WriteLine(((CountBtn)buttons[2]).Amt); 
         Console.ForegroundColor = ConsoleColor.White;
 
         //Console.WriteLine(((CountBtn)buttons[3]).Amt);
 
-        buttons[0].ChangeAction(() => Console.WriteLine("Attack: " + attackCount));
+        buttons[0].ChangeAction(() => {owner.attacking=true;owner.Troops=attackCount;});//Console.WriteLine("Attack: " + attackCount));
         buttons[1].ChangeAction(() => Console.WriteLine("Move: " + moveCount));   
     }
     Vector2 pos(int basePos,int size, string text)
