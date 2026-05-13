@@ -10,7 +10,7 @@ Raylib.SetTargetFPS(60);
 Raylib.SetExitKey(KeyboardKey.Null);
 
 
-List<Tile> bᛟᚨᛏ = new List<Tile>();
+List<Land> bᛟᚨᛏ = new List<Land>();
 // bᛟᚨᛏ.Add(new Tile(new(500,500)));
 // bᛟᚨᛏ.Add(new Tile(new(600,500)));
 // bᛟᚨᛏ.Add(new Tile(new(700,550)));P
@@ -67,7 +67,7 @@ while (!Raylib.WindowShouldClose())
     {
         item.Draw3();
     }
-    Tile.hideLines = false;
+    Land.hideLines = false;
 
     // test.Update();
     // test.Draw();

@@ -4,7 +4,7 @@ using Raylib_cs;
 
 namespace Bestagons;
 
-public class WAter : Tile
+public class WAter : Land
 {
     public WAter(Vector2 position) : base(position)
     {
@@ -18,8 +18,8 @@ public class WAter : Tile
         //DrawTroops([textColor,fillColor],[15,5], 50);
 
     }
-    // public override void changeOwner(Player target)
-    // {
-    //     owner = target;//wow
-    // }
+     public override void changeOwner(Player target)
+     {
+         owner = null;//wow
+     }
 }

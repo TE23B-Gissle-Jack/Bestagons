@@ -4,16 +4,16 @@ using System.Numerics;
 
 namespace Bestagons;
 
-public class TileMenu: Menu
+public class TileMenu : Menu
 {
     int troopCount;
 
     int attackCount = 0;
     int moveCount = 0;
 
-    Tile owner; 
-                                                                                            //stupid
-    public TileMenu(string title, Rectangle bigbox, string[] btnText, Action[] btnActions, int sliders, int troopCount, Tile stepBro) : base(title, bigbox, btnText, btnActions)
+    Land owner;
+    //stupid
+    public TileMenu(string title, Rectangle bigbox, string[] btnText, Action[] btnActions, int sliders, int troopCount, Land stepBro) : base(title, bigbox, btnText, btnActions)
     {
         for (int i = 0; i < btnText.Length; i++)
         {
@@ -28,13 +28,13 @@ public class TileMenu: Menu
     {
         Raylib.DrawRectangleRec(bigbox, color);
         Raylib.DrawRectangleLinesEx(bigbox, 3, Color.Black);
-        
-        Vector2 titlePos = pos(10,20, title);
+
+        Vector2 titlePos = pos(10, 20, title);
         Raylib.DrawText(title, (int)titlePos.X, (int)titlePos.Y, 20, Color.Black);
 
-        Vector2 textpos = pos(30,20, "Troops: " + troopCount);
+        Vector2 textpos = pos(30, 20, "Troops: " + troopCount);
         Raylib.DrawText("Troops: " + troopCount, (int)textpos.X, (int)textpos.Y, 20, Color.Black);
-        
+
         foreach (Button button in buttons)
         {
             button.Draw();
@@ -44,7 +44,7 @@ public class TileMenu: Menu
     {
         base.Update();
 
-        attackCount = ((CountBtn)buttons[2]).Amt;    
+        attackCount = ((CountBtn)buttons[2]).Amt;
         moveCount = ((CountBtn)buttons[3]).Amt;
         Console.ForegroundColor = ConsoleColor.Green;
         //Console.WriteLine(((CountBtn)buttons[2]).Amt); 
@@ -52,10 +52,10 @@ public class TileMenu: Menu
 
         //Console.WriteLine(((CountBtn)buttons[3]).Amt);
 
-        buttons[0].ChangeAction(() => {owner.attacking=true;owner.Troops=attackCount;});//Console.WriteLine("Attack: " + attackCount));
-        buttons[1].ChangeAction(() => Console.WriteLine("Move: " + moveCount));   
+        buttons[0].ChangeAction(() => { owner.attacking = true; owner.Troops = attackCount; });//Console.WriteLine("Attack: " + attackCount));
+        buttons[1].ChangeAction(() => Console.WriteLine("Move: " + moveCount));
     }
-    Vector2 pos(int basePos,int size, string text)
+    Vector2 pos(int basePos, int size, string text)
     {
         Vector2 textSize = Raylib.MeasureTextEx(Raylib.GetFontDefault(), text, size, 1);
         return new Vector2(bigbox.X + bigbox.Width / 2 - textSize.X / 2, bigbox.Y + basePos);
